@@ -51,3 +51,6 @@ class RegisterToDataBase():
 		else:
 			res = False
 		return res	
+
+# mysql = RegisterToDataBase()
+# print(mysql.isRegistred("marcos@gmail.com",'1232'))

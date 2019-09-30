@@ -12,6 +12,7 @@ class ServerSide():
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		self.connection = ""
 		self.clients = set()
+		self.MYSQL = RegisterToDataBase()
 
 	def run_server(self):
 		
@@ -25,10 +26,25 @@ class ServerSide():
 		print("Await datas...")
 		while True:
 			try:
-				recebe = self.connection.recv(1024) 
-				print(recebe.decode())
-				for c in self.clients:
-					c.send('HELLO'.encode())
+				recebe = self.connection.recv(1024).decode() 
+				recebe = recebe.split(',')
+				if recebe[0] == "register":
+					if self.MYSQL.email_is_regitred(recebe[3]):
+						self.connection.send('error'.encode())
+					else:
+						self.MYSQL.save_datas(recebe[1],recebe[2],recebe[3],recebe[4])
+						self.connection.send('ok'.encode())
+
+				if recebe[0] == "login":
+					print(recebe[1], recebe[2])
+
+					if self.MYSQL.isRegistred(recebe[1],recebe[2]):
+						self.connection.send('ok'.encode())
+					else:
+						self.connection.send('error'.encode())
+
+				# for c in self.clients:
+				# 	c.send('Estou no For'.encode())
 			except:
 				break
 
@@ -38,7 +54,7 @@ class ServerSide():
 		print("Await Connection...")
 		while True:
 			self.connection,c = self.server_socket.accept()	
-			self.connection.send('WELCOME'.encode())		
+			# self.connection.send('WELCOME'.encode())	
 			self.clients.add(self.connection)
 			threading.Thread(target=self.receive_datas, args=(self.clients,)).start()
 
