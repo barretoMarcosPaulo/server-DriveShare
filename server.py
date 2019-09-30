@@ -1,54 +1,52 @@
 import socket
+import time
+import threading
 from mysqlDataBase import RegisterToDataBase
 
 class ServerSide():
 	def __init__(self):
-		
-		self.MYSQL = RegisterToDataBase()
-
-		self.host = ''
-		self.port = 7000
-		self.addr=(self.host , self.port)
-		self.client = ''
-		self.connection = ''
-		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
+		self.host = ""
+		self.port = 3000
+		self.address = (self.host,self.port)
+		self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self.connection = ""
+		self.clients = set()
 
-	def startServer(self):
-		self.server_socket.bind(self.addr)		
-		self.server_socket.listen(10)
+	def run_server(self):
 		
+		print("Server Started")
+		
+		self.server_socket.bind(self.address)
+		self.server_socket.listen(10)
+		self.receive_connections()
+
+	def receive_datas(self,*args, **kwargs):
+		print("Await datas...")
 		while True:
-			print('Await Connection...')
-			self.connection,self.client = self.server_socket.accept()
-			print('Connected , Client = ', self.client)
-			self.receiveDatas()
-	
-	def stopServer(self):
+			try:
+				recebe = self.connection.recv(1024) 
+				print(recebe.decode())
+				for c in self.clients:
+					c.send('HELLO'.encode())
+			except:
+				break
+
+		
+	def receive_connections(self):
+
+		print("Await Connection...")
+		while True:
+			self.connection,c = self.server_socket.accept()	
+			self.connection.send('WELCOME'.encode())		
+			self.clients.add(self.connection)
+			threading.Thread(target=self.receive_datas, args=(self.clients,)).start()
+
+	def stop_server(self):
 		self.server_socket.close()
 
-	def receiveDatas(self):
+Server = ServerSide()
+Server.run_server() 
 
-		received = self.connection.recv(1024)
-		data_received = received.decode() 
-		data_received = data_received.split(',') 
-	    
-		isRegistred = "Ok"
 
-		if data_received[0] == "Register":
-			if not self.MYSQL.email_is_regitred(data_received[4]):
-				self.MYSQL.save_datas(
-					data_received[1], 
-					data_received[2], 
-					data_received[4], 
-					data_received[3], 
-				)
-				self.connection.send(isRegistred.encode())
-			else:
-				isRegistred ="Error"
-				self.connection.send(isRegistred.encode())
-		else:
-			print(data_received)
 
-driveShare = ServerSide()
-driveShare.startServer()
