@@ -2,7 +2,7 @@ import socket
 import time
 import threading
 from mysqlDataBase import RegisterToDataBase
-
+import os
 class ServerSide():
 	def __init__(self):
 		self.host = ""
@@ -13,7 +13,7 @@ class ServerSide():
 		self.connection = ""
 		self.clients = set()
 		self.MYSQL = RegisterToDataBase()
-
+		self.defaultPath = "filesUser/"
 	def run_server(self):
 		
 		print("Server Started")
@@ -32,8 +32,19 @@ class ServerSide():
 					if self.MYSQL.email_is_regitred(recebe[3]):
 						self.connection.send('error'.encode())
 					else:
+						
+						path ="filesUser/"+recebe[3]
+						os.mkdir(path)
+						os.mkdir(path+"/documentos")
+						os.mkdir(path+"/imagens")
+						os.mkdir(path+"/musicas")
+						os.mkdir(path+"/videos")
+						os.mkdir(path+"/outros")
+						os.mkdir(path+"/compartilhados")
+
 						self.MYSQL.save_datas(recebe[1],recebe[2],recebe[3],recebe[4])
 						self.connection.send('ok'.encode())
+						
 
 				if recebe[0] == "login":
 					print(recebe[1], recebe[2])

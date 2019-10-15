@@ -54,3 +54,4 @@ class RegisterToDataBase():
 
 # mysql = RegisterToDataBase()
 # print(mysql.isRegistred("marcos@gmail.com",'1232'))
+# a = mysql.selectUser('marcos@gmail.com')
