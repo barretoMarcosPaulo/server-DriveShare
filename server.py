@@ -22,6 +22,17 @@ class ServerSide():
 		self.server_socket.listen(10)
 		self.receive_connections()
 
+	def receive_connections(self):
+
+		print("Await Connection...")
+		while True:
+			self.connection,c = self.server_socket.accept()	
+			# self.connection.send('WELCOME'.encode())	
+			self.clients.add(self.connection)
+			print(self.connection)
+			threading.Thread(target=self.receive_datas, args=(self.clients,)).start()
+
+
 	def receive_datas(self,*args, **kwargs):
 		print("Await datas...")
 		while True:
@@ -41,7 +52,7 @@ class ServerSide():
 						os.mkdir(path+"/videos")
 						os.mkdir(path+"/outros")
 						os.mkdir(path+"/compartilhados")
-
+						print(recebe)
 						self.MYSQL.save_datas(recebe[1],recebe[2],recebe[3],recebe[4])
 						self.connection.send('ok'.encode())
 						
@@ -59,15 +70,6 @@ class ServerSide():
 			except:
 				break
 
-		
-	def receive_connections(self):
-
-		print("Await Connection...")
-		while True:
-			self.connection,c = self.server_socket.accept()	
-			# self.connection.send('WELCOME'.encode())	
-			self.clients.add(self.connection)
-			threading.Thread(target=self.receive_datas, args=(self.clients,)).start()
 
 	def stop_server(self):
 		self.server_socket.close()
