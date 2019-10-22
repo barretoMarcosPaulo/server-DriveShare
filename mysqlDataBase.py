@@ -8,8 +8,14 @@ class RegisterToDataBase():
 		self.database = 'drive'
 		self.user = 'driveshare'
 		self.passwd = 'drive@123'
-		# self.connection = pymysql.connect(host=self.host,db=self.database, user=self.user, passwd=self.passwd)
+		self.connection = " "
 
+	def connect(self):
+		print("Conectado ao Banco de Dados")
+		self.connection = pymysql.connect(host=self.host,db=self.database, user=self.user, passwd=self.passwd)
+	
+	def disconnect(self):
+		self.connection.close()
 
 	def save_datas(self , name , lastname , email , password):
 		
