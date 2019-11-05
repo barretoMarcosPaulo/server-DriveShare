@@ -26,6 +26,31 @@ class ServerSide(threading.Thread):
                 message = data.decode()
                 message = message.split(',')
 
+                if message[0] == "upload":
+
+                    print("Upload",message[1])
+                    
+                    self.csocket.send('ok'.encode())
+                    
+                    f = open('filesUser/'+message[1],'wb')
+                    
+                                        
+                    while True:
+                        l = self.csocket.recv(1024)
+                        
+                        while (l):
+                            print("Receiving... ")
+                            
+                            if "done" in str(l):
+                                print("Upload Finalizado")
+                                break
+                            l = self.csocket.recv(1024)
+                            f.write(l)
+                        f.close()
+
+                        print("FORA")
+                        
+                        break
                 if message[0] == "register":
 
                     # if self.MYSQL.email_is_regitred(message[3]):
@@ -52,7 +77,7 @@ class ServerSide(threading.Thread):
 
 if __name__ == '__main__':
     HOST = ''
-    PORT = 3000
+    PORT = 8000
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((HOST, PORT))
