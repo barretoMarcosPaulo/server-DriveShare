@@ -52,12 +52,16 @@ class RegisterToDataBase():
 		querySelect = "SELECT * FROM users WHERE email=%s AND passwd=%s"
 		cursor.execute(querySelect,(email,passwds))
 		users = cursor.fetchall()
+		
+
 		if len(users) > 0:
-			res = True
+			print("ACHOU S")
+			return True,list(users)
 		else:
-			res = False
-		return res	
+			print("ACHOU N")
+			return False,list(users)
+	
 
 # mysql = RegisterToDataBase()
-# print(mysql.isRegistred("marcos@gmail.com",'1232'))
-# a = mysql.selectUser('marcos@gmail.com')
+# mysql.connect()
+# print(mysql.isRegistred("samuel@gmail","123"))

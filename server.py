@@ -29,10 +29,12 @@ class ServerSide(threading.Thread):
                 if message[0] == "upload":
 
                     print("Upload",message[1])
+                    print("Pasta de upload ",message[2])
                     
                     self.csocket.send('ok'.encode())
-                    
-                    f = open('filesUser/'+message[1],'wb')
+                    path = "filesUser/"+message[2]+"/"+message[1]
+                    print(path)
+                    f = open(path,'wb')
                     
                                         
                     while True:
@@ -70,8 +72,20 @@ class ServerSide(threading.Thread):
                     self.csocket.send('ok'.encode())
                 
                 if message[0] == 'login':
+                    # Email message[0] Senha message[1]
+                    status,user = self.MYSQL.isRegistred(message[1],message[2])
+                    
+                    if status:
+                        response = list()
+                        response.append(user[0][0])
+                        response.append(user[0][1])
+                        response.append(user[0][2])
+                        response.append(user[0][3])
 
-                    self.csocket.send('ok'.encode())
+                        self.csocket.send(str(response).encode())
+                    else:
+                        self.csocket.send('error'.encode())
+
             except:
                 pass    
 
