@@ -27,31 +27,22 @@ class ServerSide(threading.Thread):
                 message = message.split(',')
 
                 if message[0] == "upload":
-
-                    print("Upload",message[1])
-                    print("Pasta de upload ",message[2])
                     
                     self.csocket.send('ok'.encode())
-                    path = "filesUser/"+message[2]+"/"+message[1]
-                    print(path)
-                    f = open(path,'wb')
+                    destino = "filesUser/"+message[2]+"/"+message[3]+"/"+message[1]
+                    f = open(destino,'wb')
                     
                                         
                     while True:
                         l = self.csocket.recv(1024)
                         
                         while (l):
-                            print("Receiving... ")
-                            
                             if "done" in str(l):
                                 print("Upload Finalizado")
                                 break
                             l = self.csocket.recv(1024)
                             f.write(l)
                         f.close()
-
-                        print("FORA")
-                        
                         break
                 if message[0] == "register":
 
