@@ -28,17 +28,19 @@ class ServerSide(threading.Thread):
 
                 if message[0] == "upload":
                     
+                    print("UPLOAD: ", message)
                     self.csocket.send('ok'.encode())
-                    destino = "filesUser/"+message[2]+"/"+message[3]+"/"+message[1]
+                    destino = "filesUser/"+message[2]+"/"+message[4]+"/"+message[1]
+
                     f = open(destino,'wb')
-                    
-                                        
+                                                            
                     while True:
                         l = self.csocket.recv(1024)
                         
                         while (l):
                             if "done" in str(l):
                                 print("Upload Finalizado")
+                                self.MYSQL.save_file(message[1],message[4],message[5],message[3])
                                 break
                             l = self.csocket.recv(1024)
                             f.write(l)

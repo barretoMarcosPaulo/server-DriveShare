@@ -1,12 +1,12 @@
 
 import pymysql
-
+from datetime import date
 
 class RegisterToDataBase():
 	def __init__(self):
 		self.host = 'localhost'
 		self.database = 'drive'
-		self.user = 'driveshare'
+		self.user = 'drive'
 		self.passwd = 'drive@123'
 		self.connection = " "
 
@@ -36,6 +36,22 @@ class RegisterToDataBase():
 				print("Error!!!")
 		except:
 			print("Connection Error!!!")
+
+	def save_file(self,filename,filetype,size,user_id):
+
+		current_date = date.today()
+
+		try:
+			cursor = self.connection.cursor()
+			query = "INSERT INTO files(filename,filetype,size,date_upload,user_id) VALUES(%s,%s,%s,%s,%s)"
+			try:
+				cursor.execute(query,(filename,filetype,size,current_date,user_id))
+				self.connection.commit()
+			except:
+				print("Error!!!")
+		except:
+			print("Connection Error!!!")
+
 
 	def email_is_regitred(self,email):
 		cursor = self.connection.cursor()
