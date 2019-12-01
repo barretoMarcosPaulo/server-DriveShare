@@ -67,7 +67,7 @@ class ServerSide(threading.Thread):
                     self.csocket.send('ok'.encode())
                 
                 if message[0] == 'login':
-                    # Email message[0] Senha message[1]
+    
                     status,user = self.MYSQL.isRegistred(message[1],message[2])
                     
                     if status:

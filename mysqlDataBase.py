@@ -81,10 +81,21 @@ class RegisterToDataBase():
 	
 	def get_files(self, type_file, user_id):
 
-		cursor = self.connection.cursor()
-		querySelect = "SELECT * FROM files WHERE filetype=%s AND user_id=%s"
-		cursor.execute(querySelect,(type_file,user_id))
-		files = cursor.fetchall()
+		files = []
+
+		if type_file == "recentes":
+
+			cursor = self.connection.cursor()
+			querySelect = "SELECT * FROM files order by id desc LIMIT 15"
+			cursor.execute(querySelect)
+			files = cursor.fetchall()
+
+		else:
+
+			cursor = self.connection.cursor()
+			querySelect = "SELECT * FROM files WHERE filetype=%s AND user_id=%s"
+			cursor.execute(querySelect,(type_file,user_id))
+			files = cursor.fetchall()
 
 		return files
 			
