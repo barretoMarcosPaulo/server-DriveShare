@@ -4,6 +4,8 @@ import time
 import threading
 from mysqlDataBase import RegisterToDataBase
 import os
+from datetime import date, datetime
+
 
 class ServerSide(threading.Thread):
     def __init__(self,clientAddress,clientsocket,database):
@@ -78,6 +80,26 @@ class ServerSide(threading.Thread):
                         self.csocket.send(str(response).encode())
                     else:
                         self.csocket.send('error'.encode())
+
+                if message[0] == "get_files":
+
+                    print(message)
+                    
+                    files = self.MYSQL.get_files(message[1],message[2])
+                    
+                    a = []
+                   
+                    for file in files:
+
+                        a.append(";")
+                        a.append(file[0])
+                        a.append(file[1])
+                        a.append(file[2])
+                        a.append(file[3])
+                        a.append(file[4].strftime('%d/%m/%Y'))
+                        a.append(file[5])
+
+                    self.csocket.send(str(a).encode())
 
             except:
                 pass    

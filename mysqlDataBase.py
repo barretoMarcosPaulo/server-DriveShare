@@ -42,13 +42,15 @@ class RegisterToDataBase():
 		current_date = date.today()
 
 		try:
+			print("Conectando")
 			cursor = self.connection.cursor()
 			query = "INSERT INTO files(filename,filetype,size,date_upload,user_id) VALUES(%s,%s,%s,%s,%s)"
-			try:
-				cursor.execute(query,(filename,filetype,size,current_date,user_id))
-				self.connection.commit()
-			except:
-				print("Error!!!")
+			
+			print("Salvando")
+			cursor.execute(query,(filename,filetype,size,current_date,user_id))
+			self.connection.commit()
+			print("Ok")
+
 		except:
 			print("Connection Error!!!")
 
@@ -77,7 +79,12 @@ class RegisterToDataBase():
 			print("ACHOU N")
 			return False,list(users)
 	
+	def get_files(self, type_file, user_id):
 
-# mysql = RegisterToDataBase()
-# mysql.connect()
-# print(mysql.isRegistred("samuel@gmail","123"))
+		cursor = self.connection.cursor()
+		querySelect = "SELECT * FROM files WHERE filetype=%s AND user_id=%s"
+		cursor.execute(querySelect,(type_file,user_id))
+		files = cursor.fetchall()
+
+		return files
+			
