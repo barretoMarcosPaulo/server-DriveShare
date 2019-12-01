@@ -86,8 +86,8 @@ class RegisterToDataBase():
 		if type_file == "recentes":
 
 			cursor = self.connection.cursor()
-			querySelect = "SELECT * FROM files order by id desc LIMIT 15"
-			cursor.execute(querySelect)
+			querySelect = "SELECT * FROM files WHERE user_id=%s order by id desc LIMIT 15"
+			cursor.execute(querySelect,(user_id))
 			files = cursor.fetchall()
 
 		else:
