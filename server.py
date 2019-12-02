@@ -45,7 +45,10 @@ class ServerSide(threading.Thread):
                                 self.MYSQL.save_file(message[1],message[4],message[5],message[3])
                                 break
                             l = self.csocket.recv(1024)
-                            f.write(l)
+
+                            if "done" not in str(l):
+                                print(l)
+                                f.write(l)
                         f.close()
                         break
                 if message[0] == "register":
@@ -62,7 +65,7 @@ class ServerSide(threading.Thread):
                     os.mkdir(path+"/videos")
                     os.mkdir(path+"/outros")
                     os.mkdir(path+"/compartilhados")
-                    print(message)
+
                     self.MYSQL.save_datas(message[1],message[2],message[3],message[4])
                     self.csocket.send('ok'.encode())
                 
@@ -83,7 +86,6 @@ class ServerSide(threading.Thread):
 
                 if message[0] == "get_files":
 
-                    print(message)
                     
                     files = self.MYSQL.get_files(message[1],message[2])
                     
@@ -100,6 +102,23 @@ class ServerSide(threading.Thread):
                         a.append(file[5])
 
                     self.csocket.send(str(a).encode())
+
+                if message[0] == "download":
+                    print(message[1])
+                    
+                    fileName = "filesUser/"+message[1]
+                    f = open(fileName,'rb')
+
+                    l = f.read(1024)
+                    while (l):
+                        print('Sending...')
+                        print(l)
+                        self.csocket.send(l)
+                        l = f.read(1024)
+                    f.close()
+                    time.sleep(3)
+                    self.csocket.send("done".encode())
+                    print("Done Sending")
 
             except:
                 pass    
