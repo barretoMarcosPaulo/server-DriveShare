@@ -98,4 +98,17 @@ class RegisterToDataBase():
 			files = cursor.fetchall()
 
 		return files
-			
+
+	def user_exists(self,email):
+
+		cursor = self.connection.cursor()
+		querySelect = "SELECT * FROM users WHERE email=%s"
+		cursor.execute(querySelect,(email))
+		users = cursor.fetchall()
+		
+		if len(users) > 0:
+			print("ACHOU S")
+			return True,list(users)
+		else:
+			print("ACHOU N")
+			return False,list(users)

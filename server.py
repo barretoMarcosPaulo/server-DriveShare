@@ -120,6 +120,17 @@ class ServerSide(threading.Thread):
                     self.csocket.send("done".encode())
                     print("Done Sending")
 
+                if message[0] == "verifica_usuario":
+                    print("Verificando verifica_usuario")
+
+                    status,usuario = self.MYSQL.user_exists(message[1])
+
+                    if status:
+                        self.csocket.send(str(usuario).encode())
+                    else:
+                        self.csocket.send('error'.encode())
+
+
             except:
                 pass    
 
