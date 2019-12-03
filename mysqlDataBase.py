@@ -112,3 +112,44 @@ class RegisterToDataBase():
 		else:
 			print("ACHOU N")
 			return False,list(users)
+
+	def shared_register(self,user_shared , file , user_receive):
+
+		current_date = date.today()
+
+		try:
+			print("Conectando")
+			cursor = self.connection.cursor()
+			query = "INSERT INTO shared( user_shared, file_id, user_receive, date_shared) VALUES(%s,%s,%s,%s)"
+			
+			print("Salvando")
+			cursor.execute(query,(user_shared , file , user_receive , current_date))
+			self.connection.commit()
+			print("Ok")
+			return True
+
+		except:
+			print("Connection Error!!!")
+			return False
+
+	def get_files_shared(self , email):
+
+		cursor = self.connection.cursor()
+		
+		querySelect = "SELECT users.primaryName, users.email,files.filename,files.size FROM shared INNER JOIN users ON users.id = shared.user_receive INNER JOIN files ON files.id = shared.file_id"
+
+		cursor.execute(querySelect)
+		shareds = cursor.fetchall()
+		list_current_user = []
+
+		if len(shareds) > 0:
+			print("ACHOU S")
+			for s in shareds:
+				if s[1]==email:
+					list_current_user.append(s)
+
+			return True,list(list_current_user)
+		else:
+			print("ACHOU N")
+			return False,list(list_current_user)
+

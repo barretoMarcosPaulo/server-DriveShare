@@ -130,6 +130,16 @@ class ServerSide(threading.Thread):
                     else:
                         self.csocket.send('error'.encode())
 
+                if message[0] == "shared":
+                    print("AQUI")
+                    print(message)
+                    
+                    if self.MYSQL.shared_register(message[1],message[2],message[3]):
+                        print("Entrou")
+                        self.csocket.send('ok'.encode())
+                    else:
+                        self.csocket.send('error'.encode())
+
 
             except:
                 pass    
