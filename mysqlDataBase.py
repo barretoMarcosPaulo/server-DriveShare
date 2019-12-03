@@ -153,3 +153,29 @@ class RegisterToDataBase():
 			print("ACHOU N")
 			return False,list(list_current_user)
 
+	def my_shared_files(self,user_id):
+		
+		cursor = self.connection.cursor()
+		querySelect = "SELECT * FROM shared WHERE user_receive=%s"
+		cursor.execute(querySelect,(user_id))
+		files = cursor.fetchall()
+
+		return files
+
+
+	def user_shared(self, user_id):
+		cursor = self.connection.cursor()
+		querySelect = "SELECT primaryName,email FROM users WHERE id=%s"
+		cursor.execute(querySelect,(user_id))
+		user = cursor.fetchall()
+
+		return user
+
+	
+	def file_shared(self, file_id):
+		cursor = self.connection.cursor()
+		querySelect = "SELECT filename,filetype FROM files WHERE id=%s"
+		cursor.execute(querySelect,(file_id))
+		file = cursor.fetchall()
+
+		return file

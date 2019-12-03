@@ -140,6 +140,33 @@ class ServerSide(threading.Thread):
                     else:
                         self.csocket.send('error'.encode())
 
+                if message[0] == "files_comp":
+                    
+                    files = self.MYSQL.my_shared_files(message[1])
+                    
+                    user = []
+                    file_user = []
+                    string = " "
+
+                    for file in files:
+                        # 2 and 4
+                        user.append(self.MYSQL.user_shared(file[2]))   
+                        file_user.append(self.MYSQL.file_shared(file[4]))
+
+
+                    for i in range(len(user)):
+                        string+=";"
+                        string+=user[i][0][0]+","
+                        string+=user[i][0][1]+","
+
+                        string+=file_user[i][0][0]+","
+                        string+=file_user[i][0][1]
+
+                    
+
+                    self.csocket.send(string.encode())
+
+
 
             except:
                 pass    
